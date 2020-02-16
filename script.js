@@ -36,7 +36,7 @@ function bindEvents() {
 		} else {
 			$.ajax({
 				'type': 'GET',
-				'url': 'http://' + configs.ip + ':3232/',
+				'url': 'http://' + configs.ip + ':80/',
 				'data': {
 					'action': 'getLockTime'
 				},
@@ -61,7 +61,7 @@ function bindEvents() {
 		if ($.trim(password) != '') {
 			$.ajax({
 				'type': 'GET',
-				'url': 'http://' + configs.ip + ':3232/',
+				'url': 'http://' + configs.ip + ':80/',
 				'data': {
 					'action': 'login',
 					'password': md5(password),
@@ -91,7 +91,7 @@ function checkLogin() {
 	if (ssid != undefined) {
 		$.ajax({
 			'type': 'GET',
-			'url': 'http://' + configs.ip + ':3232/',
+			'url': 'http://' + configs.ip + ':80/',
 			'data': {
 				'action': 'checkLogin',
 				'ssid': ssid
@@ -121,7 +121,7 @@ function openGate(gate) {
 
 		$.ajax({
 			'type': 'GET',
-			'url': 'http://' + configs.ip + ':3232/',
+			'url': 'http://' + configs.ip + ':80/',
 			'data': {
 				'action': 'open',
 				'ssid': ssid,
