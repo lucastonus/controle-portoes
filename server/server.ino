@@ -50,13 +50,14 @@ void loop() {
 	request.replace("&", "', '");
 	request = "{'" + request + "'}";
 
-	DynamicJsonBuffer jBuffer;
-	JsonObject& jObject = jBuffer.parseObject(request);
-	String action = jObject["action"];
+	DynamicJsonDocument requestJson(1024);
+	deserializeJson(requestJson, request);
+
+	String action = requestJson["action"];
 
 	if (action == "login") {
-		String jPassword = jObject["password"];
-		String jKey = jObject["key"];
+		String jPassword = requestJson["password"];
+		String jKey = requestJson["key"];
 
 		if (jPassword == password) {
 			client.println("HTTP/1.1 200 OK");
@@ -72,7 +73,7 @@ void loop() {
 			wrongCredentials(client);
 		}
 	} else if (action == "checkLogin") {
-		String jSSID = jObject["ssid"];
+		String jSSID = requestJson["ssid"];
 
 		if (jSSID == key && jSSID != "") {
 			client.println("HTTP/1.1 200 OK");
@@ -82,8 +83,8 @@ void loop() {
 			wrongCredentials(client);
 		}
 	} else if (action == "open") {
-		String jSSID = jObject["ssid"];
-		String jGate = jObject["gate"];
+		String jSSID = requestJson["ssid"];
+		String jGate = requestJson["gate"];
 
 		if (jSSID == key) {
 			client.println("HTTP/1.1 200 OK");
