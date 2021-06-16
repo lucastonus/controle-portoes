@@ -6,7 +6,7 @@ const String ssid = "";
 const String wifiPassword = "";
 
 const String wsAddress = "";
-const int wsPort = 8888;
+const int wsPort = 7777;
 
 WiFiClient wifiClient;
 WebSocketClient wsc = WebSocketClient(wifiClient, wsAddress, wsPort);
