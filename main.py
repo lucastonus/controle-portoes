@@ -18,7 +18,7 @@ def auth(callback: Callable, request: request, admin: bool = True):
 
 @app.route('/start', methods=['POST'])
 def start():
-	return auth(lambda: socketServer.init('127.0.0.1', 7777), request)
+	return auth(lambda: socketServer.init('', 7777), request)
 
 @app.route('/stop', methods=['POST'])
 def stop():
@@ -33,4 +33,4 @@ def connect():
 
 @app.route('/gates', methods=['POST'])
 def gates():
-	return auth(lambda idUser: socketServer.sendMessage(request.get_json(), idUser), request, False)
+	return auth(lambda idUser: socketServer.openGates(request.get_json(), idUser), request, False)

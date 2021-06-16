@@ -26,10 +26,13 @@ class SocketServer:
 		return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 
 	def acceptConnection(self):
-		self.stopClient()
-		client, address = self.socket.accept()
-		threading._start_new_thread(self.newClient, (client, address))
-		return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+		if (self.socket != None):
+			self.stopClient()
+			client, address = self.socket.accept()
+			threading._start_new_thread(self.newClient, (client, address))
+			return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
+		else:
+			return json.dumps({'success': False}), 503, {'ContentType': 'application/json'}
 
 	def stop(self):
 		self.stopClient()
@@ -52,11 +55,24 @@ class SocketServer:
 			self.client.close()
 			self.client = None
 
-	def sendMessage(self, payload: str, idUser: int):
+	def sendMessage(self, message: str):
 		if (self.client != None):
+			self.client.sendall(bytearray([1, 125]) + bytes(message, 'utf-8'))
+
+	def openGates(self, payload: dict, idUser: int):
+		if (self.client != None):
+			if (len(payload['gates']['gate']) == 2):
+				gate = 3
+			else:
+				if (payload['gates']['gate'][0] == 'GATE_INSIDE'):
+					gate = 2
+				else:
+					gate = 1
+
 			db = DBConn()
-			db.insert("INSERT INTO log (id_user, gate) VALUES (%s, %s)", [idUser, 1])
-			self.client.sendall(bytearray([1, 125]) + bytes(json.dumps(payload), 'utf-8'))
+			db.insert("INSERT INTO log (id_user, gate) VALUES (%s, %s)", [idUser, gate])
+
+			self.sendMessage(json.dumps(payload))
 			return json.dumps({'success': True}), 200, {'ContentType': 'application/json'}
 		else:
 			return json.dumps({'success': False}), 503, {'ContentType': 'application/json'}
