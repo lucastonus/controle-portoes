@@ -2,30 +2,30 @@ from DBConn import DBConn
 from flask import request
 
 class Authentication:
+
 	ADMIN = 1
-	idUser = 0
+	id_user = 0
 
-	def __init__(self, authAdmin: bool = True):
-		self.__authAdmin = authAdmin
+	def __init__(self, auth_admin: bool = True):
+		self.__auth_admin = auth_admin
 
-	def isAuthenticated(self, request: request) -> list:
-		isAdmin = False
-		isAuthenticated = False
+	def is_authenticated(self, request: request) -> list:
+		is_admin = False
+		is_authenticated = False
 
 		if ('Authorization' in request.headers):
 			authorization = request.headers['Authorization'].split(' ')
 			auth_key = authorization[1] if len(authorization) > 1 else authorization[0]
 
-			db = DBConn()
-			result = db.select('SELECT id FROM user WHERE auth_key = %s AND status = %s', [auth_key, 1])
-			isAuthenticated = len(result)
-			isAdmin = (isAuthenticated and result[0][0] == self.ADMIN)
-			self.setIdUser(result[0][0] if isAuthenticated else 0)
+			result = DBConn().select('SELECT id FROM user WHERE auth_key = %s AND status = %s', [auth_key, 1])
+			is_authenticated = len(result)
+			is_admin = (is_authenticated and result[0][0] == self.ADMIN)
+			self.set_id_user(result[0][0] if is_authenticated else 0)
 
-		return isAdmin if self.__authAdmin else isAuthenticated
+		return is_admin if self.__auth_admin else is_authenticated
 
-	def setIdUser(self, idUser):
-		self.idUser = idUser
+	def set_id_user(self, id_user) -> None:
+		self.id_user = id_user
 
-	def getIdUser(self):
-		return self.idUser
+	def get_id_user(self) -> int:
+		return self.id_user

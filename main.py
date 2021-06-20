@@ -1,36 +1,36 @@
 from flask import Flask, request
 from SocketServer import SocketServer
 from Authentication import Authentication
+from Response import Response
 from typing import Callable
-import json
-import socket
 
 app = Flask('GatesAPI')
 
-socketServer = SocketServer()
+socket_server = SocketServer()
 
-def auth(callback: Callable, request: request, admin: bool = True):
+def auth(callback: Callable, request: request, admin: bool = True) -> tuple:
 	authentication = Authentication(admin)
-	if (authentication.isAuthenticated(request)):
-		return callback(authentication.getIdUser()) if admin == False else callback()
+	if (authentication.is_authenticated(request)):
+		return callback(authentication.get_id_user()) if not admin else callback()
 	else:
-		return json.dumps({'success': False}), 401, {'ContentType': 'application/json'}
+		return Response(Response.INVALID_CREDENTIALS)
 
 @app.route('/start', methods=['POST'])
-def start():
-	return auth(lambda: socketServer.init('', 7777), request)
+def start() -> tuple:
+	return auth(lambda: socket_server.init('', 7777), request)
 
 @app.route('/stop', methods=['POST'])
-def stop():
-	return auth(lambda: socketServer.stop(), request)
+def stop() -> tuple:
+	return auth(lambda: socket_server.stop(), request)
 
 @app.route('/connect', methods=['POST'])
-def connect():
-	try:
-		return auth(lambda: socketServer.acceptConnection(), request)
-	except socket.timeout:
-		return json.dumps({'success': False}), 408, {'ContentType': 'application/json'}
+def connect() -> tuple:
+	return auth(lambda: socket_server.accept_connection(), request)
 
 @app.route('/gates', methods=['POST'])
-def gates():
-	return auth(lambda idUser: socketServer.openGates(request.get_json(), idUser), request, False)
+def gates() -> tuple:
+	return auth(lambda idUser: socket_server.open_gates(request.get_json(), idUser), request, False)
+
+@app.route('/', methods=['GET'])
+def status() -> tuple:
+	return auth(lambda: socket_server.status(request.get_json()), request, False)
