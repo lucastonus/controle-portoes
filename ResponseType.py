@@ -1,4 +1,4 @@
-class ResponseMessage:
+class ResponseType:
 
 	HTTP_CODE = {
 		'OK': 200,
@@ -36,6 +36,10 @@ class ResponseMessage:
 	SERVER_ALREADY_STOPPED = {
 		'http_code': HTTP_CODE['OK'],
 		'message': 'O servidor já está encerrado'
+	}
+
+	SERVER_STATUS = {
+		'http_code': HTTP_CODE['OK']
 	}
 
 	GATE_NOT_INFORMED = {

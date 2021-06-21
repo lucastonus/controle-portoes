@@ -1,11 +1,13 @@
 from DBConn import DBConn
 from Response import Response
-from ResponseMessage import ResponseMessage
+from ResponseType import ResponseType
 import json
 import socket
 import threading
 
 class SocketServer:
+
+	SOCKET_PORT = 7777
 
 	socket = None
 
@@ -26,12 +28,12 @@ class SocketServer:
 			try:
 				self.socket.bind((host, port))
 				self.socket.listen()
-				return Response(ResponseMessage.SERVER_STARTED_SUCCESSFULLY).create()
+				return Response(ResponseType.SERVER_STARTED_SUCCESSFULLY).message()
 			except socket.error as msg:
 				self.socket = None
-				return Response(ResponseMessage.SERVER_ERROR_ON_START).create(msg)
+				return Response(ResponseType.SERVER_ERROR_ON_START).create(msg)
 		else:
-			return Response(ResponseMessage.SERVER_ALREADY_STARTED).create()
+			return Response(ResponseType.SERVER_ALREADY_STARTED).message()
 
 	def accept_connection(self) -> tuple:
 		if (self.socket != None):
@@ -39,11 +41,11 @@ class SocketServer:
 				self.stop_client()
 				client, address = self.socket.accept()
 				threading._start_new_thread(self.new_client, (client, address))
-				return Response(ResponseMessage.CLIENT_CONNECTED_SUCCESSFULLY).create()
+				return Response(ResponseType.CLIENT_CONNECTED_SUCCESSFULLY).message()
 			except socket.timeout:
-				return Response(ResponseMessage.CLIENT_CONNECTION_TIMED_OUT).create(self.TIMEOUT_SECONDS)
+				return Response(ResponseType.CLIENT_CONNECTION_TIMED_OUT).create(self.TIMEOUT_SECONDS)
 		else:
-			return Response(ResponseMessage.SERVER_NOT_STARTED).create()
+			return Response(ResponseType.SERVER_NOT_STARTED).message()
 
 	def stop(self) -> tuple:
 		self.stop_client()
@@ -51,9 +53,9 @@ class SocketServer:
 		if (self.socket != None):
 			self.socket.close()
 			self.socket = None
-			return Response(ResponseMessage.SERVER_STOPPED_SUCCESSFULLY).create()
+			return Response(ResponseType.SERVER_STOPPED_SUCCESSFULLY).message()
 		else:
-			return Response(ResponseMessage.SERVER_ALREADY_STOPPED).create()
+			return Response(ResponseType.SERVER_ALREADY_STOPPED).message()
 
 	def new_client(self, client, address) -> None:
 		self.client = client
@@ -67,13 +69,22 @@ class SocketServer:
 	def send_message(self, message: str) -> tuple:
 		try:
 			self.client.sendall(bytearray([1, 125]) + bytes(message, 'utf-8'))
-			return Response(ResponseMessage.CLIENT_MESSAGE_SENT).create()
+			return Response(ResponseType.CLIENT_MESSAGE_SENT).message()
 		except BrokenPipeError:
 			self.stop_client()
-			return Response(ResponseMessage.CLIENT_CONNECTION_LOST).create()
+			return Response(ResponseType.CLIENT_CONNECTION_LOST).message()
 
 	def status(self):
-		return {}, 200
+		response = {
+			'server': {
+				'started': self.socket != None
+			},
+			'client': {
+				'connected': self.client != None
+			}
+		}
+
+		return Response(ResponseType.SERVER_STATUS).data(response)
 
 	def open_gates(self, payload: dict, id_user: int) -> tuple:
 		if (self.client != None):
@@ -84,13 +95,13 @@ class SocketServer:
 					gate = payload_gate
 
 					result = self.send_message(json.dumps(payload))
-					if (result[1] == ResponseMessage.HTTP_CODE['OK']):
+					if (result[1] == ResponseType.HTTP_CODE['OK']):
 						DBConn().insert('INSERT INTO log (id_user, gate) VALUES (%s, %s)', [id_user, gate])
 
 					return result
 				else:
-					return Response(ResponseMessage.INVALID_GATE).create()
+					return Response(ResponseType.INVALID_GATE).message()
 			else:
-				return Response(ResponseMessage.GATE_NOT_INFORMED).create()
+				return Response(ResponseType.GATE_NOT_INFORMED).message()
 		else:
-			return Response(ResponseMessage.CLIENT_NOT_CONNECTED).create()
+			return Response(ResponseType.CLIENT_NOT_CONNECTED).message()

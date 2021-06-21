@@ -2,22 +2,23 @@ from flask import Flask, request
 from SocketServer import SocketServer
 from Authentication import Authentication
 from Response import Response
+from ResponseType import ResponseType
 from typing import Callable
 
 app = Flask('GatesAPI')
 
 socket_server = SocketServer()
 
-def auth(callback: Callable, request: request, admin: bool = True) -> tuple:
+def auth(callback: Callable, request: request, admin: bool = True, id_user: bool = False) -> tuple:
 	authentication = Authentication(admin)
 	if (authentication.is_authenticated(request)):
-		return callback(authentication.get_id_user()) if not admin else callback()
+		return callback(authentication.get_id_user()) if id_user else callback()
 	else:
-		return Response(Response.INVALID_CREDENTIALS)
+		return Response(ResponseType.INVALID_CREDENTIALS).message()
 
 @app.route('/start', methods=['POST'])
 def start() -> tuple:
-	return auth(lambda: socket_server.init('', 7777), request)
+	return auth(lambda: socket_server.init('', SocketServer.SOCKET_PORT), request)
 
 @app.route('/stop', methods=['POST'])
 def stop() -> tuple:
@@ -29,8 +30,8 @@ def connect() -> tuple:
 
 @app.route('/gates', methods=['POST'])
 def gates() -> tuple:
-	return auth(lambda idUser: socket_server.open_gates(request.get_json(), idUser), request, False)
+	return auth(lambda idUser: socket_server.open_gates(request.get_json(), idUser), request, False, True)
 
-@app.route('/', methods=['GET'])
+@app.route('/status', methods=['GET'])
 def status() -> tuple:
-	return auth(lambda: socket_server.status(request.get_json()), request, False)
+	return auth(lambda: socket_server.status(), request, False)
