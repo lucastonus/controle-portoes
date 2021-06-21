@@ -31,7 +31,7 @@ class SocketServer:
 				return Response(ResponseType.SERVER_STARTED_SUCCESSFULLY).message()
 			except socket.error as msg:
 				self.socket = None
-				return Response(ResponseType.SERVER_ERROR_ON_START).create(msg)
+				return Response(ResponseType.SERVER_ERROR_ON_START).message(msg)
 		else:
 			return Response(ResponseType.SERVER_ALREADY_STARTED).message()
 
@@ -43,7 +43,7 @@ class SocketServer:
 				threading._start_new_thread(self.new_client, (client, address))
 				return Response(ResponseType.CLIENT_CONNECTED_SUCCESSFULLY).message()
 			except socket.timeout:
-				return Response(ResponseType.CLIENT_CONNECTION_TIMED_OUT).create(self.TIMEOUT_SECONDS)
+				return Response(ResponseType.CLIENT_CONNECTION_TIMED_OUT).message(self.TIMEOUT_SECONDS)
 		else:
 			return Response(ResponseType.SERVER_NOT_STARTED).message()
 
