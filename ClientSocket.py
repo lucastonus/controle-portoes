@@ -1,14 +1,12 @@
+import sys
 import socket
 
 class SocketClient():
 
 	connection = None
 
-	HOST = '127.0.0.1'
-	PORT = 7777
-
-	def __init__(self):
-		self.init(self.HOST, self.PORT)
+	def __init__(self, host: str, port: int):
+		self.init(host, port)
 
 	def init(self, host: str, port: str) -> None:
 		self.connection = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -36,4 +34,8 @@ class SocketClient():
 	def send(self, data: str) -> None:
 		self.connection.send(bytes(data, 'utf-8'))
 
-SocketClient()
+if __name__ == "__main__":
+	if (len(sys.argv) == 3):
+		SocketClient(sys.argv[1], sys.argv[2])
+	else:
+		print('Formato inválido: [host] [port]')
