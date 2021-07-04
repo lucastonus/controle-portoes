@@ -81,3 +81,7 @@ class ResponseType:
 		'http_code': HTTP_CODE['SERVICE_UNAVAILABLE'],
 		'message': 'O servidor não foi inicializado'
 	}
+
+	LOGS_DATA = {
+		'http_code': HTTP_CODE['OK']
+	}

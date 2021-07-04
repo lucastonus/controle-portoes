@@ -105,3 +105,16 @@ class SocketServer:
 				return Response(ResponseType.GATE_NOT_INFORMED).message()
 		else:
 			return Response(ResponseType.CLIENT_NOT_CONNECTED).message()
+
+	def logs(self):
+		logs = DBConn().select('SELECT l.id, u.name, l.gate, l.time FROM log l JOIN user u ON u.id = l.id_user LIMIT 50', [])
+		responseData = []
+		for log in logs:
+			responseData.append({
+				'id': log[0],
+				'user': log[1],
+				'gate': log[2],
+				'datetime': log[3].strftime("%d/%m/%Y %H:%M:%S")
+			})
+
+		return Response(ResponseType.LOGS_DATA).data(responseData)

@@ -35,3 +35,7 @@ def gates() -> tuple:
 @app.route('/status', methods=['GET'])
 def status() -> tuple:
 	return auth(lambda: socket_server.status(), request, False)
+
+@app.route('/logs', methods=['GET'])
+def logs() -> tuple:
+	return auth(lambda: socket_server.logs(), request, False)
