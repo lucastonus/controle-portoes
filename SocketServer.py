@@ -60,6 +60,7 @@ class SocketServer:
 	def new_client(self, client, address) -> None:
 		self.client = client
 		self.client_address = address
+		self.client.sendall(bytes("\nConnected", 'utf-8'))
 
 	def stop_client(self) -> None:
 		if (self.client != None):
@@ -68,7 +69,7 @@ class SocketServer:
 
 	def send_message(self, message: str) -> tuple:
 		try:
-			self.client.sendall(bytearray([1, 125]) + bytes(message, 'utf-8'))
+			self.client.sendall(bytes(message, 'utf-8'))
 			return Response(ResponseType.CLIENT_MESSAGE_SENT).message()
 		except BrokenPipeError:
 			self.stop_client()
