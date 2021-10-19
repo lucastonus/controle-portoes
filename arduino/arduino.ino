@@ -28,9 +28,9 @@ void setup() {
 
 void loop() {
 	while (wsc.connected()) {
-		String payload = wsc.readString();
+		if (wsc.parseMessage()) {
+			String payload = wsc.readString();
 
-		if (payload.length()) {
 			Serial.println(payload);
 
 			DynamicJsonDocument message(1024);

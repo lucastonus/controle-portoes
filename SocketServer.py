@@ -1,6 +1,8 @@
 from DBConn import DBConn
 from Response import Response
 from ResponseType import ResponseType
+from SocketMessage import ws_encode
+
 import json
 import socket
 import threading
@@ -60,7 +62,7 @@ class SocketServer:
 	def new_client(self, client, address) -> None:
 		self.client = client
 		self.client_address = address
-		self.client.sendall(bytes("\nConnected", 'utf-8'))
+		self.client.sendall(ws_encode(data="Connected"))
 
 	def stop_client(self) -> None:
 		if (self.client != None):
@@ -69,7 +71,7 @@ class SocketServer:
 
 	def send_message(self, message: str) -> tuple:
 		try:
-			self.client.sendall(bytes(message, 'utf-8'))
+			self.client.sendall(ws_encode(data=message))
 			return Response(ResponseType.CLIENT_MESSAGE_SENT).message()
 		except BrokenPipeError:
 			self.stop_client()
