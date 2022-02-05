@@ -24,7 +24,7 @@ class SocketClient():
 				message = self.read()
 				if (message == ''):
 					break
-				print(message[2:])
+				print(message)
 		except KeyboardInterrupt:
 			self.connection.close()
 
