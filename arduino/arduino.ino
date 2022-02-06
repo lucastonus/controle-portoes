@@ -22,16 +22,19 @@ const int GATE_BOTH = 3;
 void setup() {
 	Serial.begin(115200);
 	initPins();
-	connectWifi();
-	wsc.begin();
 }
 
 void loop() {
+	if (WiFi.status() != WL_CONNECTED) {
+		connectWifi();
+	}
+
+	wsc.begin();
+	delay(20000);
+
 	while (wsc.connected()) {
 		if (wsc.parseMessage()) {
 			String payload = wsc.readString();
-
-			Serial.println(payload);
 
 			DynamicJsonDocument message(1024);
 			DeserializationError error = deserializeJson(message, payload);
@@ -41,15 +44,12 @@ void loop() {
 
 				switch (gate) {
 					case GATE_OUTSIDE:
-						Serial.println("Abrindo portão: OUTSIDE");
 						openGate(gateOutside);
 						break;
 					case GATE_INSIDE:
-						Serial.println("Abrindo portão: INSIDE");
 						openGate(GATE_INSIDE);
 						break;
 					case GATE_BOTH:
-						Serial.println("Abrindo portão: OUTSIDE e INSIDE");
 						openGate(gateOutside);
 						openGate(GATE_INSIDE);
 						break;
