@@ -10,6 +10,9 @@ class SocketServer:
 
 	SOCKET_PORT = 7777
 
+	TYPE_TEXT = 1
+	TYPE_PING = 9
+
 	socket = None
 
 	client = None
@@ -69,7 +72,7 @@ class SocketServer:
 
 	def send_message(self, message: str) -> tuple:
 		try:
-			self.client.sendall(bytearray([1, len(message)]) + bytes(message, 'utf-8'))
+			self.client.sendall(bytearray([self.TYPE_TEXT, len(message)]) + bytes(message, 'utf-8'))
 			return Response(ResponseType.CLIENT_MESSAGE_SENT).message()
 		except:
 			self.stop_client()
@@ -119,3 +122,9 @@ class SocketServer:
 			})
 
 		return Response(ResponseType.LOGS_DATA).data(responseData)
+
+	def ping(self):
+		if (self.client != None):
+			message = 'ping'
+			self.client.sendall(bytearray([self.TYPE_PING, len(message)]) + bytes(message, 'utf-8'))
+			return Response(ResponseType.CLIENT_PING).message()

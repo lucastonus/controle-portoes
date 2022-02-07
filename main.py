@@ -28,6 +28,10 @@ def stop() -> tuple:
 def connect() -> tuple:
 	return auth(lambda: socket_server.accept_connection(), request)
 
+@app.route('/ping', method='POST')
+def ping() -> tuple:
+	return auth(lambda: socket_server.ping(), request)
+
 @app.route('/gates', methods=['POST'])
 def gates() -> tuple:
 	return auth(lambda idUser: socket_server.open_gates(request.get_json(), idUser), request, False, True)

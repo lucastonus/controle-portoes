@@ -18,6 +18,11 @@ class ResponseType:
 		'message': 'A mensagem foi enviada com sucesso'
 	}
 
+	CLIENT_PING = {
+		'http_code': HTTP_CODE['OK'],
+		'message': 'Ping enviado com sucesso'
+	}
+
 	SERVER_STARTED_SUCCESSFULLY = {
 		'http_code': HTTP_CODE['OK'],
 		'message': 'O servidor foi inicializado com sucesso'
