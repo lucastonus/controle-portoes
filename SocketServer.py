@@ -125,6 +125,7 @@ class SocketServer:
 
 	def ping(self):
 		if (self.client != None):
-			message = 'ping'
+			message = 'ping_pong'
 			self.client.sendall(bytearray([self.TYPE_PING, len(message)]) + bytes(message, 'utf-8'))
-			return Response(ResponseType.CLIENT_PING).message()
+			response = self.client.recv(1024)
+			return Response(ResponseType.CLIENT_PING).data({'response': str(response)})

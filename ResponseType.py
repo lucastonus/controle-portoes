@@ -19,8 +19,7 @@ class ResponseType:
 	}
 
 	CLIENT_PING = {
-		'http_code': HTTP_CODE['OK'],
-		'message': 'Ping enviado com sucesso'
+		'http_code': HTTP_CODE['OK']
 	}
 
 	SERVER_STARTED_SUCCESSFULLY = {

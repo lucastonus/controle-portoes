@@ -28,7 +28,7 @@ def stop() -> tuple:
 def connect() -> tuple:
 	return auth(lambda: socket_server.accept_connection(), request)
 
-@app.route('/ping', method='POST')
+@app.route('/ping', methods=['POST'])
 def ping() -> tuple:
 	return auth(lambda: socket_server.ping(), request)
 
