@@ -129,3 +129,5 @@ class SocketServer:
 			self.client.sendall(bytearray([self.TYPE_PING, len(message)]) + bytes(message, 'utf-8'))
 			response = self.client.recv(1024)
 			return Response(ResponseType.CLIENT_PING).data({'response': str(response)})
+		else:
+			return Response(ResponseType.CLIENT_NOT_CONNECTED).message()
