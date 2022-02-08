@@ -15,8 +15,8 @@ int gateOutside = D1;
 int gateInside = D2;
 int led = D8;
 
-const int GATE_OUTSIDE = 1;
-const int GATE_INSIDE = 2;
+const int GATE_INSIDE = 1;
+const int GATE_OUTSIDE = 2;
 const int GATE_BOTH = 3;
 
 void setup() {
@@ -30,7 +30,6 @@ void loop() {
 	}
 
 	wsc.begin();
-	delay(20000);
 
 	while (wsc.connected()) {
 		if (wsc.parseMessage()) {
@@ -43,20 +42,23 @@ void loop() {
 				int gate = message["gate"];
 
 				switch (gate) {
+					case GATE_INSIDE:
+						openGate(gateInside);
+						break;
 					case GATE_OUTSIDE:
 						openGate(gateOutside);
 						break;
-					case GATE_INSIDE:
-						openGate(GATE_INSIDE);
-						break;
 					case GATE_BOTH:
 						openGate(gateOutside);
-						openGate(GATE_INSIDE);
+						delay(1000);
+						openGate(gateInside);
 						break;
 				}
 			}
 		}
 	}
+
+	delay(20000);
 }
 
 void connectWifi() {
@@ -74,16 +76,16 @@ void initPins() {
 	pinMode(gateOutside, OUTPUT);
 	pinMode(gateInside, OUTPUT);
 	pinMode(led, OUTPUT);
-	digitalWrite(gateOutside, HIGH);
-	digitalWrite(gateInside, HIGH);
+	digitalWrite(gateOutside, LOW);
+	digitalWrite(gateInside, LOW);
 	digitalWrite(led, HIGH);
 }
 
 void openGate(int gate) {
 	digitalWrite(led, HIGH);
-	// digitalWrite(gate, HIGH);
+	digitalWrite(gate, HIGH);
 	delay(750);
-	// digitalWrite(gate, LOW);
 	digitalWrite(led, LOW);
+	digitalWrite(gate, LOW);
 	delay(750);
 }

@@ -18,8 +18,8 @@ class SocketServer:
 	client = None
 	client_address = None
 
-	GATE_OUTSIDE = 1
-	GATE_INSIDE = 2
+	GATE_INSIDE = 1
+	GATE_OUTSIDE = 2
 	GATE_BOTH = 3
 
 	TIMEOUT_SECONDS = 30
