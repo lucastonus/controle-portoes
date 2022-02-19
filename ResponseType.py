@@ -46,6 +46,11 @@ class ResponseType:
 		'http_code': HTTP_CODE['OK']
 	}
 
+	GATE_TRIGGERED = {
+		'http_code': HTTP_CODE['OK'],
+		'message': 'Acionado'
+	}
+
 	GATE_NOT_INFORMED = {
 		'http_code': HTTP_CODE['BAD_REQUEST'],
 		'message': 'O portão não foi informado'

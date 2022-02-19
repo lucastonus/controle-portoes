@@ -101,8 +101,9 @@ class SocketServer:
 					result = self.send_message(json.dumps(payload))
 					if (result[1] == ResponseType.HTTP_CODE['OK']):
 						DBConn().insert('INSERT INTO log (id_user, gate) VALUES (%s, %s)', [id_user, gate])
-
-					return result
+						return Response(ResponseType.GATE_TRIGGERED).message()
+					else:
+						return result
 				else:
 					return Response(ResponseType.INVALID_GATE).message()
 			else:
