@@ -15,8 +15,8 @@ int gateOutside = D1;
 int gateInside = D2;
 int led = D8;
 
-const int GATE_INSIDE = 1;
-const int GATE_OUTSIDE = 2;
+const int GATE_OUTSIDE = 1;
+const int GATE_INSIDE = 2;
 const int GATE_BOTH = 3;
 
 void setup() {
@@ -42,11 +42,11 @@ void loop() {
 				int gate = message["gate"];
 
 				switch (gate) {
-					case GATE_INSIDE:
-						openGate(gateInside);
-						break;
 					case GATE_OUTSIDE:
 						openGate(gateOutside);
+						break;
+					case GATE_INSIDE:
+						openGate(gateInside);
 						break;
 					case GATE_BOTH:
 						openGate(gateOutside);
@@ -76,16 +76,16 @@ void initPins() {
 	pinMode(gateOutside, OUTPUT);
 	pinMode(gateInside, OUTPUT);
 	pinMode(led, OUTPUT);
-	digitalWrite(gateOutside, LOW);
-	digitalWrite(gateInside, LOW);
-	digitalWrite(led, HIGH);
+	digitalWrite(gateOutside, HIGH);
+	digitalWrite(gateInside, HIGH);
+	digitalWrite(led, LOW);
 }
 
 void openGate(int gate) {
 	digitalWrite(led, HIGH);
-	digitalWrite(gate, HIGH);
+	digitalWrite(gate, LOW);
 	delay(750);
 	digitalWrite(led, LOW);
-	digitalWrite(gate, LOW);
+	digitalWrite(gate, HIGH);
 	delay(750);
 }
