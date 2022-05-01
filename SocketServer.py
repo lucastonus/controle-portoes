@@ -1,6 +1,7 @@
 from DBConn import DBConn
 from Response import Response
 from ResponseType import ResponseType
+from datetime import datetime
 
 import json
 import socket
@@ -23,6 +24,11 @@ class SocketServer:
 	GATE_BOTH = 3
 
 	TIMEOUT_SECONDS = 30
+
+	def __init__(self):
+		file = open('log.txt', 'a')
+		file.writelines(datetime.now().strftime('%d/%m/%Y %H:%M:%S') +'\n')
+		file.close()
 
 	def init(self, host: str, port: int) -> tuple:
 		if (self.socket == None):
