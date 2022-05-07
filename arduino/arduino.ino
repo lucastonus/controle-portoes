@@ -2,14 +2,10 @@
 #include <ArduinoJson.h>
 #include <ArduinoHttpClient.h>
 
-const String ssid = "";
-const String wifiPassword = "";
-
-const String wsAddress = "";
-const int wsPort = 7777;
+#include "env.h"
 
 WiFiClient wifiClient;
-WebSocketClient wsc = WebSocketClient(wifiClient, wsAddress, wsPort);
+WebSocketClient wsc = WebSocketClient(wifiClient, WS_ADDRESS, WS_PORT);
 
 int gateOutside = D1;
 int gateInside = D2;
@@ -20,7 +16,7 @@ const int GATE_INSIDE = 2;
 const int GATE_BOTH = 3;
 
 void setup() {
-	Serial.begin(115200);
+	Serial.begin(9600);
 	initPins();
 }
 
@@ -40,19 +36,22 @@ void loop() {
 
 			if (!error) {
 				int gate = message["gate"];
+				String secret = message["secret"];
 
-				switch (gate) {
-					case GATE_OUTSIDE:
-						openGate(gateOutside);
-						break;
-					case GATE_INSIDE:
-						openGate(gateInside);
-						break;
-					case GATE_BOTH:
-						openGate(gateOutside);
-						delay(1000);
-						openGate(gateInside);
-						break;
+				if (secret.equals(SECRET)) {
+					switch (gate) {
+						case GATE_OUTSIDE:
+							openGate(gateOutside);
+							break;
+						case GATE_INSIDE:
+							openGate(gateInside);
+							break;
+						case GATE_BOTH:
+							openGate(gateOutside);
+							delay(1000);
+							openGate(gateInside);
+							break;
+					}
 				}
 			}
 		}
@@ -62,7 +61,7 @@ void loop() {
 }
 
 void connectWifi() {
-	WiFi.begin(ssid, wifiPassword);
+	WiFi.begin(SSID, WIFI_PASSWORD);
 
 	while (WiFi.status() != WL_CONNECTED) {
 		digitalWrite(led, HIGH);
