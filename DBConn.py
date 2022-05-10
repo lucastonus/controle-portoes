@@ -10,7 +10,7 @@ class DBConn:
 		cursor = conn.cursor()
 		cursor.execute(query, values)
 		conn.commit()
-		return cursor.total_changes
+		return conn.total_changes
 
 	def select(self, query: str, values: tuple) -> list:
 		conn = self.get_conn()
