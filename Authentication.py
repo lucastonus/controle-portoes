@@ -17,7 +17,7 @@ class Authentication:
 			authorization = request.headers['Authorization'].split(' ')
 			auth_key = authorization[1] if len(authorization) > 1 else authorization[0]
 
-			result = DBConn().select('SELECT id FROM user WHERE auth_key = %s AND status = %s', [auth_key, 1])
+			result = DBConn().select('SELECT id FROM user WHERE auth_key = ? AND status = ?', [auth_key, 1])
 			is_authenticated = len(result)
 			is_admin = (is_authenticated and result[0][0] == self.ADMIN)
 			self.set_id_user(result[0][0] if is_authenticated else 0)
