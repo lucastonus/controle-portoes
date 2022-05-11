@@ -116,7 +116,7 @@ class SocketServer:
 			return Response(ResponseType.CLIENT_NOT_CONNECTED).message()
 
 	def logs(self):
-		logs = DBConn().select('SELECT l.id, u.name, l.gate, strftime("%d/%m/%Y %H:%M:%S", l.time) FROM log l JOIN user u ON u.id = l.id_user ORDER BY l.id DESC LIMIT 10', [])
+		logs = DBConn().select('SELECT l.id, u.name, l.gate, strftime("%d/%m/%Y %H:%M:%S", datetime(l.time, "localtime")) FROM log l JOIN user u ON u.id = l.id_user ORDER BY l.id DESC LIMIT 10', [])
 		responseData = []
 		for log in logs:
 			responseData.append({
